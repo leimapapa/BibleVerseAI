@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Verse AI</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2451471082233132"
+     crossorigin="anonymous"></script>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+      	margin: 0 auto;
+      	height: 100vh;
+      	width: 100vw;
+      }
+      .verse-container {
+        position: absolute;
+      	top: 50%;
+      	left: 50%;
+      	transform: translate(-50%, -50%);
+        width: 80vw;
+        height: 80vh;
+      	min-height: 256px;
+      	min-width: 256px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      	cursor: pointer;
+      }
+      
+      .ml{
+      	height: 50%;
+      	width: 50%;
+      	position: absolute;
+      	top: 50%;
+      	left: 50%;
+      	transform: translate(-50%, -50%) rotate(90deg);
+      	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cg fill='%2361e1a1'%3E%3Ccircle cx='10' cy='10' r='10'%3E%3Canimate id='animX1' attributeName='cx' repeatCount='indefinite' dur='2s' values='10; 50; 90' /%3E%3Canimate id='animY1' attributeName='cy' begin='0s; animY3.end' dur='2s' values='10; 10; 50' /%3E%3Canimate id='animY2' attributeName='cy' begin='animY1.end' dur='2s' values='10; 50; 50' /%3E%3Canimate id='animY3' attributeName='cy' begin='animY2.end' dur='2s' values='10; 90; 50' /%3E%3C/circle%3E%3Ccircle cx='10' cy='10' r='10'%3E%3Canimate attributeName='cx' repeatCount='indefinite' dur='2s' values='10; 50; 90' /%3E%3Canimate attributeName='cy' begin='0s; animY3.end' dur='2s' values='36; 50; 50' /%3E%3Canimate attributeName='cy' begin='animY1.end' dur='2s' values='36; 10; 50' /%3E%3Canimate attributeName='cy' begin='animY2.end' dur='2s' values='36; 90; 50' /%3E%3C/circle%3E%3Ccircle cx='10' cy='10' r='10'%3E%3Canimate attributeName='cx' repeatCount='indefinite' dur='2s' values='10; 50; 90' /%3E%3Canimate attributeName='cy' begin='0s; animY3.end' dur='2s' values='63; 50; 50' /%3E%3Canimate attributeName='cy' begin='animY1.end' dur='2s' values='63; 90; 50' /%3E%3Canimate attributeName='cy' begin='animY2.end' dur='2s' values='63; 10; 50' /%3E%3C/circle%3E%3Ccircle cx='10' cy='10' r='10'%3E%3Canimate attributeName='cx' repeatCount='indefinite' dur='2s' values='10; 50; 90' /%3E%3Canimate attributeName='cy' begin='0s; animY3.end' dur='2s' values='90; 90; 50' /%3E%3Canimate attributeName='cy' begin='animY1.end' dur='2s' values='90; 50; 50' /%3E%3Canimate attributeName='cy' begin='animY2.end' dur='2s' values='90; 10; 50' /%3E%3C/circle%3E%3C/g%3E%3Cg stroke='%2361e1a1' fill='none' r='9.5'%3E%3Ccircle cx='10' cy='10' r='9.5' /%3E%3Ccircle cx='10' cy='36' r='9.5' /%3E%3Ccircle cx='10' cy='63' r='9.5' /%3E%3Ccircle cx='10' cy='90' r='9.5' /%3E%3C/g%3E%3Cg fill='%23e3fff1' fill-opacity='0.8'%3E%3Ccircle cx='50' cy='10' r='10' /%3E%3Ccircle cx='50' cy='50' r='10' /%3E%3Ccircle cx='50' cy='90' r='10' /%3E%3C/g%3E%3Ccircle cx='90' cy='50' r='10' fill='%2300cfde' fill-opacity='0.8' /%3E%3C/svg%3E");
+      	background-repeat: no-repeat;
+      }
+      #image-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      #image-container > img {
+      	position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      	border-radius: 15px;
+      }
+      
+      .verse-glass {
+        position: relative;
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        max-width: 70%;
+        text-align: center;
+        z-index: 1;
+      	transition: 200ms;
+      }
+      .verse-glass:hover{
+      	backdrop-filter: blur(0px);
+      	background: rgba(255, 255, 255, 0);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0);
+      }
+      
+      .verse {
+        font-size: 1.5rem;
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+      }
+      
+      .reference {
+        font-size: 1.2rem;
+        color: #ccc;
+        margin-top: 10px;
+      }
+    </style>
+    <body>
+      <div class="verse-container">
+      	<div id="image-container">
+        	<img id="background-image" class="background-image" src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Gutenberg_Bible%2C_Lenox_Copy%2C_New_York_Public_Library%2C_2009._Pic_01.jpg" alt="Background Image">
+      	</div>
+        <div class="verse-glass">
+          <p class="verse">"For I know the plans I have for you," declares the LORD...</p>
+          <p class="reference">Jeremiah 29:11</p>
+        </div>
+      </div>
+      <script>
+        // Function to get the average color of an image element
+        function getAverageColor(imgEl) {
+        	let blockSize = 5, // only visit every 5 pixels
+        		defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
+        		canvas = document.createElement("canvas"),
+        		context = canvas.getContext && canvas.getContext("2d"),
+        		data,
+        		width,
+        		height,
+        		i = -4,
+        		length,
+        		rgb = { r: 0, g: 0, b: 0 },
+        		count = 0;
+        
+        	if (!context) {
+        		return defaultRGB;
+        	}
+        
+        	height = canvas.height =
+        		imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
+        	width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
+        
+        	context.drawImage(imgEl, 0, 0);
+        
+        	try {
+        		data = context.getImageData(0, 0, width, height);
+        	} catch (e) {
+        		/* security error, img on diff domain */
+        		return defaultRGB;
+        	}
+        
+        	length = data.data.length;
+        
+        	while ((i += blockSize * 4) < length) {
+        		++count;
+        		rgb.r += data.data[i];
+        		rgb.g += data.data[i + 1];
+        		rgb.b += data.data[i + 2];
+        	}
+        
+        	// ~~ used to floor values
+        	rgb.r = ~~(rgb.r / count);
+        	rgb.g = ~~(rgb.g / count);
+        	rgb.b = ~~(rgb.b / count);
+        	return rgb;
+        }
+        
+        // Function to load image and calculate average color
+        function getAverageColorFromUrl(url, callback) {
+        	const img = new Image();
+        	img.crossOrigin = "Anonymous";
+        	img.src = url;
+        	img.onload = function () {
+        		const averageColor = getAverageColor(img);
+        		callback(averageColor);
+        	};
+        }
+        
+        document.addEventListener("DOMContentLoaded", function () {
+        	const imgElement = document.querySelector("#background-image");
+        	const imgUrl = imgElement.src;
+        
+        	getAverageColorFromUrl(imgUrl, function (rgb) {
+        		// Convert to a valid CSS rgb() string
+        		const averageColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        
+        		// Apply radial gradient with average color to white
+        		document.body.style.background = `radial-gradient(${averageColor} 50%, white 100%)`;
+        	});
+        });
+        
+        // const generateButton = document.getElementById("generate");
+        
+        const imageContainer = document.getElementById("image-container");
+        const loadingSpinner = document.getElementById("loading-spinner");
+        const dlLink = document.getElementById("dlLink");
+        const verse = document.querySelector(".verse");
+        // Use a CORS proxy
+        const proxyUrl = "https://corsproxy.io/?";
+        
+        function generateImage(desc) {
+        	const description = encodeURIComponent(createDescription(desc));
+        	const imageUrl = `https://image.pollinations.ai/prompt/${description}?nologo=1&seed=${generateRandomSeed()}&height=512&width=512`;
+        	displayLoadingState(true);
+        
+        	const proxiedImageUrl = proxyUrl + encodeURIComponent(imageUrl);
+        	imageContainer.innerHTML = `<div class="ml"></div>`;
+        	document.body.style.background = `radial-gradient(#123 0%, white 100%)`;
+        	fetch(proxiedImageUrl)
+        		.then((response) => response.blob())
+        		.then((blob) => {
+        		const img = new Image();
+        			img.onload = function () {
+        				displayGeneratedImage(this);
+        				displayLoadingState(false);
+        			};
+        			img.onerror = function () {
+        				throw new Error("Image failed to load");
+        			};
+        			img.src = URL.createObjectURL(blob);
+        		getAverageColorFromUrl(img.src, function (rgb) {
+        					// Convert to a valid CSS rgb() string
+        					const averageColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        
+        					// Apply radial gradient with average color to white
+        					document.body.style.background = `radial-gradient(${averageColor} 50%, white 100%)`;
+        				});
+        		})
+        		.catch((error) => {
+        			displayLoadingState(false);
+        			// message.textContent = "Failed to generate the image. Please try again.";
+        			console.error(error.message);
+        		});
+        }
+        
+        function createDescription(
+        	desc = `For God so loved the world that He gave his only son, that whosoever believes in Him will not perish, but have eternal life`
+        ) {
+        	return (
+        		desc + `, NO TEXT OR CAPTIONS, focus SOLELY on the details of the scene, radiant symmetry`
+        	);
+        }
+        
+        function generateRandomSeed() {
+        	return Math.floor(Math.random() * 1e9);
+        }
+        
+        let verseText =
+        	"For God so loved the world that He gave his only son, that whosoever believes in Him will not perish, but have eternal life";
+        
+        function displayLoadingState(isLoading) {
+        	// loadingSpinner.style.display = isLoading ? "block" : "none";
+        	// generateButton.disabled = isLoading;
+        	// if (isLoading) {
+        	// 	imageContainer.innerHTML = '';
+        	// 	// dlLink.style.display = "none";
+        	// 	// message.textContent = "The word being rendered as an image...";
+        	console.log("loading...");
+        	// }
+        }
+        
+        function displayGeneratedImage(img) {
+        	imageContainer.innerHTML = "";
+        	imageContainer.appendChild(img);
+        }
+        
+        function updateDownloadLink(imageUrl) {
+        	dlLink.style.display = "inline-block";
+        	dlLink.href = imageUrl;
+        }
+        
+        document.querySelector(".verse-container").addEventListener("click", getVerse);
+        
+        function getVerse() {
+        	fetch("https://labs.bible.org/api/?passage=random&type=json")
+        		.then((response) => response.json())
+        		.then((result) => {
+        			const verse = result[0];
+        			document.querySelector(
+        				".reference"
+        			).textContent = `${verse.bookname} ${verse.chapter}:${verse.verse}`;
+        			document.querySelector(".verse").textContent = `${verse.text}`;
+        			verseText = verse.text;
+        			generateImage(verseText);
+        		})
+        		.catch((error) => {
+        			console.error("Error fetching verse:", error);
+        			document.querySelector(".verse").innerHTML =
+        				"Failed to load verse. Please try again.";
+        		});
+        }
+        
+        getVerse();
+      </script>
+    </body>
+</html>
